@@ -7,13 +7,23 @@ use Illuminate\Http\Request;
 class TaskController extends Controller
 {
     /**
-     * 新しいコントローラインスタンスの生成
+     * タスクリポジトリーインスタンス
      *
+     * @var TaskRepository
+     */
+    protected $tasks;
+
+    /**
+     * 新しいコントローラーインスタンスの生成
+     *
+     * @param  TaskRepository  $tasks
      * @return void
      */
-    public function __construct()
+    public function __construct(TaskRepository $tasks)
     {
         $this->middleware('auth');
+
+        $this->tasks = $tasks;
     }
 
     /**
@@ -24,7 +34,9 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        return view('tasks.index');
+        return view('tasks.index', [
+            'tasks' => $this->tasks->forUser($request->user()),
+        ]);
     }
 
     /**
